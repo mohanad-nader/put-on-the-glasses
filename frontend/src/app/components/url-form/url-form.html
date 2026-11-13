@@ -1,0 +1,22 @@
+<form class="urlform" (submit)="submit($event)" novalidate>
+  <label [for]="inputId()">{{ label() }}</label>
+  <div class="row">
+    <input
+      [id]="inputId()"
+      type="text"
+      inputmode="url"
+      name="url"
+      autocomplete="url"
+      placeholder="https://your-website.com"
+      [value]="value()"
+      (input)="onInput($event)"
+      [attr.aria-invalid]="state.urlError() ? 'true' : null"
+      [attr.aria-describedby]="inputId() + '-msg'"
+    />
+    <button class="btn" type="submit">{{ buttonText() }}</button>
+  </div>
+  <p class="error" [id]="inputId() + '-msg'" role="alert">{{ state.urlError() }}</p>
+  @if (hint() && !state.urlError()) {
+    <p class="hint">{{ hint() }}</p>
+  }
+</form>

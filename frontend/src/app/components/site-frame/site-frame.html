@@ -1,0 +1,46 @@
+<p class="flabel">{{ host() }}, {{ sizeLabel() }}</p>
+
+@if (state.noMouse()) {
+  <p class="notice" role="status">
+    <span>Mouse disabled on the site. Use Tab, Shift+Tab, Enter, Space and the arrow keys.</span>
+    <button class="ghost" type="button" (click)="focusSite()">Move focus into the site</button>
+  </p>
+}
+
+<div class="measure" #measure>
+  <div
+    class="stage"
+    [style.width.px]="logicalWidth() * scale()"
+    [style.height.px]="logicalHeight() * scale()"
+  >
+    <div
+      class="artboard"
+      [style.width.px]="logicalWidth()"
+      [style.height.px]="logicalHeight()"
+      [style.transform]="'scale(' + scale() + ')'"
+    >
+      <iframe
+        #siteFrame
+        [src]="safeUrl()"
+        [title]="'Website under test: ' + host()"
+        [style.filter]="state.frameFilter()"
+        sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"
+        referrerpolicy="no-referrer"
+      ></iframe>
+
+      @if (state.lowVision() && state.tunnelVision()) {
+        <div class="mask" aria-hidden="true" [style.background]="tunnelMask()"></div>
+      }
+
+      @if (state.noMouse()) {
+        <div class="blocker" aria-hidden="true"></div>
+      }
+    </div>
+  </div>
+</div>
+
+<p class="hint">
+  Blank frame? Many sites refuse to be shown inside another page.
+  <a [href]="state.url()" target="_blank" rel="noopener noreferrer">Open the site in a new tab</a>
+  (without simulation). Proxy mode in a later milestone will handle these sites.
+</p>

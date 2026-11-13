@@ -1,0 +1,23 @@
+<div class="hero">
+  <svg class="bigglasses" viewBox="0 0 240 110" aria-hidden="true" focusable="false"><use href="#glasses" /></svg>
+  <div class="wrap">
+    <div class="copy">
+      <h1>See your website through someone else's eyes</h1>
+      <p class="lead">
+        Paste a link, pick an impairment, and use the site like a person who lives with it, link by link and form by form.
+      </p>
+
+      <app-url-form
+        inputId="home-url"
+        hint="Works with links, forms and menus, so you can finish a real task."
+        (submitted)="openTester()"
+      />
+
+      <div class="facts">
+        <p><b>1.3 billion</b>people live with a significant disability</p>
+        <p><b>8%</b>of men have some form of color blindness</p>
+        <p><b>95.9%</b>of top home pages fail at least one WCAG check</p>
+      </div>
+    </div>
+  </div>
+</div>

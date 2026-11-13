@@ -1,0 +1,98 @@
+<aside class="props" aria-label="Simulation settings">
+  <details open>
+    <summary>Color blindness</summary>
+    <p class="note">Pick one type. Swatches show how five colors change.</p>
+    <div role="group" aria-label="Color blindness type">
+      @for (o of options; track o.id) {
+        <label class="crow" [class.on]="state.colorBlindness() === o.id">
+          <input
+            type="radio"
+            name="cb"
+            [value]="o.id"
+            [checked]="state.colorBlindness() === o.id"
+            (change)="state.colorBlindness.set(o.id)"
+          />
+          <span class="sw" aria-hidden="true" [style.filter]="swatchFilter(o.id)">
+            @for (c of swatches; track c) {
+              <i [style.background]="c"></i>
+            }
+          </span>
+          <span>
+            <b>{{ o.label }}</b>
+            <small>{{ o.hint }}</small>
+          </span>
+        </label>
+      }
+    </div>
+  </details>
+
+  <details open>
+    <summary>Sight and zoom</summary>
+    <div class="switches">
+      <label class="sw-pill" [class.on]="state.lowVision()">
+        <input
+          type="checkbox"
+          role="switch"
+          [checked]="state.lowVision()"
+          (change)="state.lowVision.set(checked($event))"
+        />
+        <span class="knob" aria-hidden="true"></span>
+        <span class="t">Low vision<small>Blur, weaker contrast, tunnel view</small></span>
+      </label>
+
+      @if (state.lowVision()) {
+        <div class="sub">
+          <div class="slider">
+            <label for="lv-blur">Blur <output for="lv-blur">{{ state.blur() }} px</output></label>
+            <input id="lv-blur" type="range" min="0" max="8" step="0.2"
+              [value]="state.blur()" (input)="state.blur.set(numberValue($event))" />
+          </div>
+          <div class="slider">
+            <label for="lv-contrast">Contrast <output for="lv-contrast">{{ (state.contrast() * 100).toFixed(0) }}%</output></label>
+            <input id="lv-contrast" type="range" min="0.2" max="1" step="0.05"
+              [value]="state.contrast()" (input)="state.contrast.set(numberValue($event))" />
+          </div>
+          <label class="check">
+            <input type="checkbox" [checked]="state.tunnelVision()"
+              (change)="state.tunnelVision.set(checked($event))" />
+            Tunnel vision
+          </label>
+          @if (state.tunnelVision()) {
+            <div class="slider">
+              <label for="lv-tunnel">Clear area <output for="lv-tunnel">{{ state.tunnelSize() }}%</output></label>
+              <input id="lv-tunnel" type="range" min="20" max="80" step="5"
+                [value]="state.tunnelSize()" (input)="state.tunnelSize.set(numberValue($event))" />
+            </div>
+          }
+        </div>
+      }
+
+      <label class="sw-pill" [class.on]="state.zoomReflow()">
+        <input
+          type="checkbox"
+          role="switch"
+          [checked]="state.zoomReflow()"
+          (change)="state.zoomReflow.set(checked($event))"
+        />
+        <span class="knob" aria-hidden="true"></span>
+        <span class="t">Zoom and reflow<small>Frame narrows to 320 px wide</small></span>
+      </label>
+    </div>
+  </details>
+
+  <details open>
+    <summary>Movement</summary>
+    <div class="switches">
+      <label class="sw-pill" [class.on]="state.noMouse()">
+        <input
+          type="checkbox"
+          role="switch"
+          [checked]="state.noMouse()"
+          (change)="state.setNoMouse(checked($event))"
+        />
+        <span class="knob" aria-hidden="true"></span>
+        <span class="t">No mouse<small>Keyboard only</small></span>
+      </label>
+    </div>
+  </details>
+</aside>

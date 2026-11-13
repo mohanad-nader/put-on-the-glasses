@@ -1,0 +1,65 @@
+.hero {
+  position: relative;
+  overflow: hidden;
+  padding: 40px 0 72px;
+}
+.wrap {
+  position: relative;
+}
+.copy {
+  max-width: 600px;
+}
+h1 {
+  font-size: clamp(2.5rem, 5.4vw, 4.4rem);
+  font-weight: 800;
+  max-width: 13ch;
+}
+.lead {
+  margin-top: 22px;
+  max-width: 46ch;
+  font-size: 1.2rem;
+  color: var(--muted);
+}
+app-url-form {
+  display: block;
+  margin-top: 34px;
+}
+.facts {
+  display: flex;
+  gap: 28px;
+  margin-top: 34px;
+  flex-wrap: wrap;
+}
+.facts p {
+  max-width: 15ch;
+  font-size: 0.95rem;
+  line-height: 1.4;
+  color: var(--muted);
+}
+.facts b {
+  display: block;
+  font: 800 1.9rem var(--head);
+  color: var(--pine);
+  letter-spacing: -0.02em;
+}
+.bigglasses {
+  position: absolute;
+  top: 24px;
+  right: -150px;
+  width: 620px;
+  transform: rotate(11deg);
+  color: var(--pine);
+  pointer-events: none;
+  z-index: 3;
+  filter: drop-shadow(0 14px 18px rgba(20, 48, 43, 0.28));
+}
+@media (max-width: 900px) {
+  .hero .wrap {
+    padding-top: 70px;
+  }
+  .bigglasses {
+    width: 260px;
+    right: -80px;
+    top: -6px;
+  }
+}
