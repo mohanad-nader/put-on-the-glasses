@@ -1,0 +1,70 @@
+.fig {
+  border: 2px solid var(--pine);
+  border-radius: 22px 22px 22px 8px;
+  overflow: hidden;
+  background: var(--paper);
+  box-shadow: 0 30px 60px -34px rgba(20, 48, 43, 0.6);
+}
+.ftop {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  background: var(--pine);
+  color: var(--paper);
+  padding: 10px 16px;
+  font-size: 0.92rem;
+}
+.url {
+  flex: 1;
+  min-width: 150px;
+  background: rgba(248, 250, 245, 0.14);
+  padding: 6px 16px;
+  border-radius: 999px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.tag {
+  background: var(--gold);
+  color: var(--pine);
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 0.85rem;
+}
+.fbody {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  height: max(560px, calc(100dvh - 230px));
+}
+.canvas {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: auto;
+  padding: 24px 28px;
+  background: #e6eee8 radial-gradient(#b3c4ba 1.3px, transparent 1.4px) 0 0 / 22px 22px;
+}
+.canvas app-site-frame {
+  flex: 1;
+}
+.empty {
+  max-width: 560px;
+  margin: auto;
+  display: grid;
+  gap: 18px;
+}
+.empty h2 {
+  font-size: 1.8rem;
+}
+@media (max-width: 900px) {
+  .fbody {
+    grid-template-columns: 1fr;
+    height: auto;
+  }
+  .canvas {
+    height: 70vh;
+    min-height: 420px;
+  }
+}

@@ -1,0 +1,37 @@
+<section class="wrap" aria-labelledby="tester-h">
+  <h1 id="tester-h" class="sr">Tester</h1>
+
+  <div class="fig">
+    <div class="ftop">
+      <b>Tester</b>
+      <span class="url" [title]="state.url()">{{ state.url() || 'No site loaded' }}</span>
+      <span class="tag">{{ state.activeSummary() }}</span>
+      @if (state.url()) {
+        <button class="ghost" type="button" (click)="changeSite()">Change site</button>
+      }
+      <button class="ghost" type="button" (click)="state.reset()" [disabled]="!state.hasActiveMode()">
+        Reset
+      </button>
+    </div>
+
+    <div class="fbody">
+      <div class="canvas" role="region" aria-label="Canvas with the site frame">
+        @if (state.url()) {
+          <app-site-frame />
+        } @else {
+          <div class="empty">
+            <h2>Which site do you want to test?</h2>
+            <app-url-form
+              inputId="tester-url"
+              buttonText="Load site"
+              (submitted)="onSiteChosen()"
+            />
+          </div>
+        }
+      </div>
+      <app-simulation-panel />
+    </div>
+  </div>
+
+  <p class="sr" role="status">Simulating: {{ state.activeSummary() }}</p>
+</section>
