@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Put on the glasses | Test your website the way people actually see it</title>
+<meta name="description" content="Enter a website URL and use it as a person with color blindness, low vision or no mouse would. Then get an accessibility score with fixes.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Karla:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --mist:#dfe8e1; --paper:#f8faf5; --pine:#14302b; --gold:#f0ab2a; --plum:#5a2d57;
+  --muted:#415651; --line:#b9c8bf; --good:#2b7a4b; --bad:#b3261e;
+  --head:"Bricolage Grotesque",Georgia,serif; --body:Karla,system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--mist);color:var(--pine);font:400 1.0625rem/1.65 var(--body)}
+h1,h2,h3{font-family:var(--head);line-height:1.1;margin:0;letter-spacing:-.02em}
+p{margin:0}
+a{color:var(--plum);text-underline-offset:3px}
+:focus-visible{outline:3px solid var(--plum);outline-offset:3px;border-radius:6px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.skip{position:absolute;left:12px;top:-60px;background:var(--pine);color:var(--paper);padding:12px 18px;border-radius:10px;z-index:20}
+.skip:focus{top:12px}
+.wrap{max-width:1120px;margin:0 auto;padding:0 24px}
+svg.gl{display:block}
+
+/* header */
+header .wrap{display:flex;align-items:center;justify-content:space-between;padding-top:20px;padding-bottom:20px}
+.brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--pine);font:800 1.2rem var(--head);letter-spacing:-.02em}
+.badge{width:46px;height:46px;border-radius:15px 15px 15px 6px;background:var(--gold);position:relative;overflow:hidden;flex:none}
+.badge svg{position:absolute;width:80px;left:-7px;top:5px;transform:rotate(-15deg);color:var(--pine)}
+nav ul{display:flex;gap:6px;list-style:none;margin:0;padding:0}
+nav a{display:block;padding:12px 16px;border-radius:999px;color:var(--pine);text-decoration:none;font-weight:700}
+nav a:hover{background:var(--paper)}
+
+/* hero */
+.hero{position:relative;overflow:hidden;padding:40px 0 96px}
+.hero .wrap{position:relative}
+.hero .wrap>div{max-width:600px}
+.hero h1{font-size:clamp(2.5rem,5.4vw,4.4rem);font-weight:800;max-width:13ch}
+.lead{margin-top:22px;max-width:46ch;font-size:1.2rem;color:var(--muted)}
+.urlform{margin-top:34px;background:var(--paper);border-radius:22px 22px 22px 8px;padding:20px;box-shadow:0 18px 40px -22px rgba(20,48,43,.55)}
+.urlform label{display:block;font-weight:700;margin-bottom:8px}
+.row{display:flex;gap:10px}
+.urlform input[type=url]{flex:1;min-width:0;font:500 1.05rem var(--body);padding:15px 18px;border:2px solid var(--pine);border-radius:14px;background:#fff;color:var(--pine)}
+.urlform input::placeholder{color:#5d6f69}
+.btn{font:700 1.05rem var(--body);padding:15px 26px;border:0;border-radius:14px 14px 6px 14px;background:var(--pine);color:var(--paper);cursor:pointer;min-height:48px}
+.btn:hover{background:#0c211d}
+.hint{margin-top:10px;font-size:.95rem;color:var(--muted)}
+.facts{display:flex;gap:28px;margin-top:34px;flex-wrap:wrap}
+.facts p{max-width:15ch;font-size:.95rem;line-height:1.4;color:var(--muted)}
+.facts b{display:block;font:800 1.9rem var(--head);color:var(--pine);letter-spacing:-.02em}
+
+.bigglasses{position:absolute;top:24px;right:-150px;width:620px;transform:rotate(11deg);color:var(--pine);pointer-events:none;z-index:3;filter:drop-shadow(0 14px 18px rgba(20,48,43,.28))}
+
+/* mock browser */
+.tag::after{content:"Normal vision";background:var(--gold);color:var(--pine);font-weight:700;padding:4px 12px;border-radius:999px;font-size:.85rem}
+.screen{transition:filter .25s}
+.site{padding:22px 24px 26px;background:#fff;color:#2a2a2a;transition:filter .25s}
+.site nav-lite{display:flex;gap:16px;font-size:.85rem;color:#6a6a6a;margin-bottom:18px}
+.site h3{font-size:1.5rem;color:#2a2a2a}
+.site .soft{margin-top:8px;color:#b7b3a6;font-size:.92rem;line-height:1.5}
+.items{margin-top:18px;display:grid;gap:10px}
+.item{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 14px;border:1px solid #e4e0d6;border-radius:10px;font-size:.95rem}
+.dot{width:14px;height:14px;border-radius:50%;display:inline-block;margin-right:8px;vertical-align:-2px}
+.ok{background:#2e9e4f}.no{background:#d1342f}
+.acts{display:flex;gap:10px;margin-top:16px}
+.acts span{padding:9px 16px;border-radius:8px;color:#fff;font-weight:700;font-size:.9rem}
+
+/* section shells */
+section{padding:84px 0}
+.alt{background:var(--paper)}
+.sechead{max-width:60ch;margin-bottom:34px}
+.sechead h2{font-size:clamp(1.9rem,3.6vw,2.8rem);font-weight:800}
+.sechead p{margin-top:14px;color:var(--muted)}
+
+/* tester workspace */
+.fig{border:2px solid var(--pine);border-radius:22px 22px 22px 8px;overflow:hidden;background:var(--paper);box-shadow:0 30px 60px -34px rgba(20,48,43,.6)}
+.ftop{display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:var(--pine);color:var(--paper);padding:10px 16px;font-size:.92rem}
+.ftop .url{flex:1;min-width:150px;background:rgba(248,250,245,.14);padding:6px 16px;border-radius:999px}
+.ftop .fit{color:#cfdcd5}
+.ghost{font:700 .9rem var(--body);background:var(--gold);color:var(--pine);border:0;border-radius:10px 10px 4px 10px;padding:8px 16px;min-height:44px;cursor:pointer}
+.fbody{display:grid;grid-template-columns:1fr 330px;height:640px}
+.canvas{overflow:auto;padding:34px 30px 44px;background:#e6eee8 radial-gradient(#b3c4ba 1.3px,transparent 1.4px) 0 0/22px 22px}
+.frame{width:min(100%,680px);margin:0 auto;transition:width .3s}
+.flabel{margin-bottom:8px;font-size:.88rem;color:var(--muted)}
+.flabel .dim::after{content:"desktop frame"}
+.artboard{position:relative;background:#fff;border-radius:4px;outline:2px solid var(--plum);box-shadow:0 14px 30px -16px rgba(20,48,43,.5)}
+.artboard::before,.artboard::after{content:"";position:absolute;width:9px;height:9px;background:#fff;border:2px solid var(--plum)}
+.artboard::before{left:-6px;top:-6px}
+.artboard::after{right:-6px;bottom:-6px}
+.props{overflow:auto;padding:4px 18px 18px;border-left:2px solid var(--line)}
+.props details{padding:14px 0;border-bottom:1px solid var(--line)}
+.props details:last-child{border-bottom:0}
+.props summary{font:700 1.08rem var(--head);cursor:pointer;padding:6px 0;min-height:44px;display:flex;align-items:center}
+.note{color:var(--muted);font-size:.92rem;margin:2px 0 10px}
+.crow{position:relative;display:flex;align-items:center;gap:12px;padding:8px 10px;border-radius:12px;cursor:pointer;border:2px solid transparent}
+.crow input{position:absolute;opacity:0;inset:0;margin:0;cursor:pointer}
+.crow:hover{background:var(--mist)}
+.crow:has(input:checked){border-color:var(--pine);background:var(--mist)}
+.crow:has(input:focus-visible){outline:3px solid var(--plum);outline-offset:2px}
+.crow b{display:block;font-size:.98rem;line-height:1.2}
+.crow small{color:var(--muted);font-size:.85rem}
+.sw{display:flex;height:24px;width:64px;flex:none;border-radius:7px;overflow:hidden}
+.sw i{flex:1}
+.switches{display:grid;gap:8px}
+.sw-pill{position:relative;display:flex;align-items:center;gap:12px;padding:10px 12px;background:var(--mist);border-radius:14px;cursor:pointer;font-weight:700;border:2px solid transparent}
+.sw-pill input{position:absolute;opacity:0;inset:0;margin:0;cursor:pointer}
+.sw-pill .knob{width:40px;height:24px;border-radius:999px;background:#8fa198;position:relative;flex:none}
+.sw-pill .knob::after{content:"";position:absolute;left:3px;top:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:left .15s}
+.sw-pill:has(input:checked) .knob{background:var(--pine)}
+.sw-pill:has(input:checked) .knob::after{left:19px}
+.sw-pill:has(input:checked){border-color:var(--pine)}
+.sw-pill:has(input:focus-visible){outline:3px solid var(--plum);outline-offset:2px}
+.sw-pill .t small{display:block;font-weight:400;color:var(--muted);font-size:.85rem;line-height:1.3}
+
+/* mode driven preview */
+body:has(#cb-pro:checked) .screen{filter:url(#f-pro)}
+body:has(#cb-deu:checked) .screen{filter:url(#f-deu)}
+body:has(#cb-tri:checked) .screen{filter:url(#f-tri)}
+body:has(#cb-ach:checked) .screen{filter:url(#f-ach)}
+body:has(#cb-pro:checked) .tag::after{content:"Protanopia"}
+body:has(#cb-deu:checked) .tag::after{content:"Deuteranopia"}
+body:has(#cb-tri:checked) .tag::after{content:"Tritanopia"}
+body:has(#cb-ach:checked) .tag::after{content:"Achromatopsia"}
+body:has(#lv:checked) .site{filter:blur(1.6px) contrast(.7)}
+body:has(#zr:checked) .frame{width:320px}
+body:has(#zr:checked) .flabel .dim::after{content:"320 px frame"}
+
+/* evaluator */
+.eval{display:grid;grid-template-columns:.9fr 1.1fr;gap:56px;align-items:start}
+.checks{margin:26px 0 0;padding:0;list-style:none;display:grid;gap:16px}
+.checks li{padding-left:18px;border-left:4px solid var(--gold)}
+.checks b{font-family:var(--head);font-size:1.1rem}
+.checks span{display:block;color:var(--muted);font-size:.98rem}
+.report{background:var(--paper);border-radius:30px 30px 10px 30px;padding:30px}
+.top{display:flex;gap:26px;align-items:center;flex-wrap:wrap}
+.ring{width:148px;aspect-ratio:1;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--pine) 0 82%,#c4d2c9 0);position:relative;flex:none}
+.ring::before{content:"";position:absolute;inset:15px;background:var(--paper);border-radius:50%}
+.ring span{position:relative;font:800 2.6rem var(--head)}
+.verdict h3{font-size:1.5rem}
+.verdict p{color:var(--muted);font-size:.98rem;margin-top:4px}
+.bars{margin:26px 0 0;display:grid;gap:12px}
+.bars div{display:grid;grid-template-columns:120px 1fr 34px;gap:12px;align-items:center;font-size:.95rem}
+.bars i{display:block;height:12px;border-radius:99px;background:#c4d2c9;position:relative}
+.bars i::after{content:"";position:absolute;inset:0 auto 0 0;width:var(--w);background:var(--plum);border-radius:99px}
+.issue{margin-top:22px;background:var(--mist);border-radius:16px;padding:16px 18px}
+.issue+.issue{margin-top:12px;border-radius:16px 16px 16px 5px}
+.sev{display:inline-block;font-weight:700;font-size:.85rem;padding:2px 12px;border-radius:99px;background:var(--bad);color:#fff;margin-right:8px}
+.sev.m{background:var(--gold);color:var(--pine)}
+.issue code{background:#fff;padding:1px 7px;border-radius:6px;font-size:.92rem}
+.issue p{margin-top:6px;font-size:.98rem}
+.fine{margin-top:18px;font-size:.9rem;color:var(--muted)}
+
+/* footer */
+footer{background:var(--pine);color:var(--paper);padding:56px 0}
+footer .wrap{display:flex;justify-content:space-between;gap:30px;flex-wrap:wrap}
+footer h2{font-size:1.5rem;margin-bottom:10px}
+footer p{color:#cfdcd5;max-width:44ch}
+.ownrules{display:flex;gap:8px;flex-wrap:wrap;list-style:none;margin:0;padding:0;max-width:430px;align-content:flex-start}
+.ownrules li{background:rgba(248,250,245,.12);padding:6px 14px;border-radius:99px;font-size:.92rem}
+
+@media (max-width:900px){
+  .eval{grid-template-columns:1fr}
+  .hero .wrap{padding-top:70px}
+  .bigglasses{width:260px;right:-80px;top:-6px}
+  .fbody{grid-template-columns:1fr;height:auto}
+  .canvas{max-height:520px}
+  .props{border-left:0;border-top:2px solid var(--line);max-height:440px}
+  nav ul li:not(:last-child){display:none}
+}
+@media (max-width:520px){.row{flex-direction:column}.bars div{grid-template-columns:96px 1fr 30px}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+
+<!-- shared defs: glasses symbol and color blindness filters -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <linearGradient id="lens" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#5fb3a6" stop-opacity=".6"/>
+      <stop offset="1" stop-color="#f0ab2a" stop-opacity=".6"/>
+    </linearGradient>
+    <symbol id="glasses" viewBox="0 0 240 110">
+      <g stroke="currentColor" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none">
+        <rect x="26" y="24" width="88" height="66" rx="32" fill="url(#lens)"/>
+        <rect x="128" y="24" width="88" height="66" rx="32" fill="url(#lens)"/>
+        <path d="M114 50 C119 40 123 40 128 50"/>
+        <path d="M27 44 L6 32"/>
+        <path d="M215 44 L236 32"/>
+      </g>
+      <g stroke="#fff" stroke-width="5" stroke-linecap="round" fill="none" opacity=".75">
+        <path d="M46 52 Q52 42 66 40"/><path d="M148 52 Q154 42 168 40"/>
+      </g>
+    </symbol>
+    <filter id="f-pro" color-interpolation-filters="linearRGB"><feColorMatrix type="matrix" values="0.152 1.053 -0.205 0 0  0.115 0.786 0.099 0 0  -0.004 -0.048 1.052 0 0  0 0 0 1 0"/></filter>
+    <filter id="f-deu" color-interpolation-filters="linearRGB"><feColorMatrix type="matrix" values="0.367 0.861 -0.228 0 0  0.280 0.673 0.047 0 0  -0.012 0.043 0.969 0 0  0 0 0 1 0"/></filter>
+    <filter id="f-tri" color-interpolation-filters="linearRGB"><feColorMatrix type="matrix" values="1.256 -0.077 -0.179 0 0  -0.078 0.931 0.148 0 0  0.005 0.691 0.304 0 0  0 0 0 1 0"/></filter>
+    <filter id="f-ach" color-interpolation-filters="linearRGB"><feColorMatrix type="matrix" values="0.299 0.587 0.114 0 0  0.299 0.587 0.114 0 0  0.299 0.587 0.114 0 0  0 0 0 1 0"/></filter>
+  </defs>
+</svg>
+
+<a class="skip" href="#main">Skip to main content</a>
+
+<header>
+  <div class="wrap">
+    <a class="brand" href="#top">
+      <span class="badge"><svg class="gl" viewBox="0 0 240 110" role="img" aria-label="Tilted glasses logo"><use href="#glasses"/></svg></span>
+      Put on the glasses
+    </a>
+    <nav aria-label="Main">
+      <ul>
+        <li><a href="#tester">Tester</a></li>
+        <li><a href="#evaluator">Evaluator</a></li>
+        <li><a href="#start">Try a site</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+  <div class="hero" id="top">
+    <svg class="bigglasses gl" viewBox="0 0 240 110" aria-hidden="true" focusable="false"><use href="#glasses"/></svg>
+    <div class="wrap">
+      <div>
+        <h1>See your website through someone else's eyes</h1>
+        <p class="lead">Paste a link, pick an impairment, and use the site like a person who lives with it, link by link and form by form.</p>
+
+        <form class="urlform" id="start" action="#" onsubmit="return false">
+          <label for="site-url">Website address</label>
+          <div class="row">
+            <input id="site-url" type="url" name="url" autocomplete="url" placeholder="https://your-website.com">
+            <button class="btn" type="submit">Put them on</button>
+          </div>
+          <p class="hint">Works with links, forms and menus, so you can finish a real task.</p>
+        </form>
+
+        <div class="facts">
+          <p><b>1.3 billion</b>people live with a significant disability</p>
+          <p><b>8%</b>of men have some form of color blindness</p>
+          <p><b>95.9%</b>of top home pages fail at least one WCAG check</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <section class="alt" id="tester" aria-labelledby="tester-h">
+    <div class="wrap">
+      <div class="sechead">
+        <h2 id="tester-h">The tester</h2>
+        <p>The site opens inside a frame on the canvas, and every impairment is applied to that frame. Zoom and reflow narrows the frame to 320 px, so your browser never zooms and the page around it stays still.</p>
+      </div>
+      <div class="fig">
+        <div class="ftop"><b>Tester</b><span class="url">bayt-coffee.example</span><span class="tag"></span><span class="fit">Fit to canvas</span><button class="ghost" type="button">Screenshot</button></div>
+        <div class="fbody">
+          <div class="canvas" role="region" aria-label="Canvas with the site frame" tabindex="0">
+            <div class="frame">
+              <p class="flabel">bayt-coffee.example, <span class="dim"></span></p>
+              <div class="artboard" role="img" aria-label="Preview of a coffee shop website. Its green and red status dots and buttons change when a color blindness type is selected.">
+                <div class="screen"><div class="site">
+                  <h3>Fresh roasts, slow mornings</h3>
+                  <p class="soft">Small batches from three farms, roasted every Tuesday.</p>
+                  <div class="items">
+                    <div class="item"><span><i class="dot ok"></i>Ethiopia Guji</span><span>$14</span></div>
+                    <div class="item"><span><i class="dot no"></i>Colombia Huila</span><span>$12</span></div>
+                  </div>
+                  <div class="acts"><span style="background:#2e9e4f">Add to cart</span><span style="background:#d1342f">Remove</span></div>
+                </div></div>
+              </div>
+            </div>
+          </div>
+          <aside class="props" aria-label="Simulation settings" tabindex="0">
+<details open><summary>Color blindness</summary><p class="note">Pick one type. Swatches show how five colors change.</p>
+<label class="crow"><input type="radio" name="cb" id="cb-none" checked><span class="sw"><i style="background:#d1342f"></i><i style="background:#e8892b"></i><i style="background:#2e9e4f"></i><i style="background:#2f6fd0"></i><i style="background:#8a3fb0"></i></span><span><b>Typical</b><small>No filter</small></span></label>
+<label class="crow"><input type="radio" name="cb" id="cb-pro"><span class="sw" style="filter:url(#f-pro)"><i style="background:#d1342f"></i><i style="background:#e8892b"></i><i style="background:#2e9e4f"></i><i style="background:#2f6fd0"></i><i style="background:#8a3fb0"></i></span><span><b>Protanopia</b><small>Red-blind</small></span></label>
+<label class="crow"><input type="radio" name="cb" id="cb-deu"><span class="sw" style="filter:url(#f-deu)"><i style="background:#d1342f"></i><i style="background:#e8892b"></i><i style="background:#2e9e4f"></i><i style="background:#2f6fd0"></i><i style="background:#8a3fb0"></i></span><span><b>Deuteranopia</b><small>Green-blind</small></span></label>
+<label class="crow"><input type="radio" name="cb" id="cb-tri"><span class="sw" style="filter:url(#f-tri)"><i style="background:#d1342f"></i><i style="background:#e8892b"></i><i style="background:#2e9e4f"></i><i style="background:#2f6fd0"></i><i style="background:#8a3fb0"></i></span><span><b>Tritanopia</b><small>Blue-blind</small></span></label>
+<label class="crow"><input type="radio" name="cb" id="cb-ach"><span class="sw" style="filter:url(#f-ach)"><i style="background:#d1342f"></i><i style="background:#e8892b"></i><i style="background:#2e9e4f"></i><i style="background:#2f6fd0"></i><i style="background:#8a3fb0"></i></span><span><b>Achromatopsia</b><small>Total color blindness</small></span></label>
+</details>
+<details open><summary>Sight and zoom</summary><div class="switches">
+<label class="sw-pill"><input type="checkbox" id="lv"><span class="knob"></span><span class="t">Low vision<small>Blur, weaker contrast, tunnel view</small></span></label>
+<label class="sw-pill"><input type="checkbox" id="zr"><span class="knob"></span><span class="t">Zoom and reflow<small>Frame narrows to 320 px, text at 200%</small></span></label>
+</div></details>
+<details open><summary>Movement</summary><p class="note">No mouse and no keyboard cannot be combined.</p><div class="switches">
+<label class="sw-pill"><input type="checkbox"><span class="knob"></span><span class="t">No mouse<small>Keyboard only</small></span></label>
+<label class="sw-pill"><input type="checkbox"><span class="knob"></span><span class="t">No keyboard<small>Pointer only</small></span></label>
+<label class="sw-pill"><input type="checkbox"><span class="knob"></span><span class="t">Hand tremor<small>Cursor shakes, small targets get missed</small></span></label>
+</div></details>
+<details open><summary>Reading and structure</summary><div class="switches">
+<label class="sw-pill"><input type="checkbox"><span class="knob"></span><span class="t">Screen-reader view<small>Names, roles, headings and landmarks as a list</small></span></label>
+<label class="sw-pill"><input type="checkbox"><span class="knob"></span><span class="t">Tab-order overlay<small>Numbers show where focus travels</small></span></label>
+<label class="sw-pill"><input type="checkbox"><span class="knob"></span><span class="t">Side by side<small>Original next to simulated</small></span></label>
+</div></details>
+          </aside>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="evaluator" aria-labelledby="eval-h">
+    <div class="wrap eval">
+      <div>
+        <div class="sechead" style="margin-bottom:0">
+          <h2 id="eval-h">Website Accessibility Evaluator</h2>
+          <p>A separate tool that checks a page on its own, without the tester. You get a score from 0 to 100, what is missing and how to fix it. Run it in code review, before a release, or after every version to watch the score move.</p>
+        </div>
+        <form class="urlform" action="#" onsubmit="return false">
+          <label for="eval-url">Page to evaluate</label>
+          <div class="row">
+            <input id="eval-url" type="url" name="url" autocomplete="url" placeholder="https://your-website.com">
+            <button class="btn" type="submit">Evaluate</button>
+          </div>
+        </form>
+        <ul class="checks">
+          <li><b>Color and design</b><span>Contrast of every text element, with a compliant color suggested.</span></li>
+          <li><b>Keyboard</b><span>Focus visibility, traps, skip link and focus order.</span></li>
+          <li><b>Structure</b><span>Page title, language, viewport, headings and landmarks.</span></li>
+          <li><b>Content quality</b><span>Alt text, link text, form labels and autocomplete.</span></li>
+        </ul>
+      </div>
+
+      <div class="report" aria-label="Sample accessibility report">
+        <div class="top">
+          <div class="ring" role="img" aria-label="Score 82 out of 100"><span>82</span></div>
+          <div class="verdict"><h3>Good</h3><p>bayt-coffee.example<br>Desktop and 320 px checked</p></div>
+        </div>
+        <div class="bars">
+          <div>Perceivable<i style="--w:74%"></i><b>74</b></div>
+          <div>Operable<i style="--w:88%"></i><b>88</b></div>
+          <div>Understandable<i style="--w:91%"></i><b>91</b></div>
+          <div>Robust<i style="--w:80%"></i><b>80</b></div>
+          <div>Metadata<i style="--w:69%"></i><b>69</b></div>
+        </div>
+        <div class="issue">
+          <span class="sev">Critical</span><b>Low contrast text</b>
+          <p>Paragraph under the hero is <code>#b0b0b0</code> on white, ratio 2.2:1. WCAG 1.4.3 needs 4.5:1. Fix: use <code>#767676</code> or darker. Gains 6 points.</p>
+        </div>
+        <div class="issue">
+          <span class="sev m">Moderate</span><b>Generic link text</b>
+          <p>Three links say "click here". WCAG 2.4.4. Fix: name the destination, such as "Read the roast notes".</p>
+        </div>
+        <p class="fine">The score is a guide, not a certification. Some checks still need a person.</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div>
+      <h2>Built to follow its own advice</h2>
+      <p>Human-Computer Interaction project, Faculty of Engineering, Alexandria University. This page is a visual preview only.</p>
+    </div>
+    <ul class="ownrules" aria-label="Accessibility practices used on this page">
+      <li>4.5:1 text contrast</li><li>Skip link</li><li>Visible focus</li><li>Labeled form fields</li><li>44 px targets</li><li>Works at 320 px</li><li>Respects reduced motion</li>
+    </ul>
+  </div>
+</footer>
+
+</body>
+</html>
