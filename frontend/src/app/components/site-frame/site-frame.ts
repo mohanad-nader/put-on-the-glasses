@@ -56,6 +56,20 @@ export class SiteFrame {
 
   protected readonly filter = computed(() => (this.simulated() ? this.state.frameFilter() : 'none'));
 
+  /**
+   * Chrome and Edge ignore a CSS/SVG `filter` set on an iframe that shows a
+   * different site (it runs in its own process). A transparent layer in front
+   * of the frame with `backdrop-filter` filters what is behind it instead and
+   * works for every site. Browsers without it fall back to filtering the iframe.
+   */
+  protected readonly useLens =
+    typeof CSS !== 'undefined' &&
+    typeof CSS.supports === 'function' &&
+    CSS.supports('backdrop-filter', 'url(#a)');
+
+  protected readonly iframeFilter = computed(() => (this.useLens ? 'none' : this.filter()));
+  protected readonly lensFilter = computed(() => (this.useLens ? this.filter() : 'none'));
+
   protected readonly logicalWidth = computed(() =>
     this.simulated() && this.state.zoomReflow() ? REFLOW_FRAME_WIDTH : DESKTOP_FRAME_WIDTH
   );

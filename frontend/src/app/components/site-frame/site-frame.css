@@ -51,6 +51,12 @@ iframe {
   border: 0;
   background: #fff;
 }
+/* Color blindness and low vision: filters whatever is behind it, never takes clicks. */
+.lens {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
 /* Tunnel vision: lets clicks pass through so the dark area is not a wall. */
 .mask {
   position: absolute;

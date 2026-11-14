@@ -26,10 +26,19 @@
         #siteFrame
         [src]="safeUrl()"
         [title]="'Website under test: ' + host()"
-        [style.filter]="filter()"
+        [style.filter]="iframeFilter()"
         sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"
         referrerpolicy="no-referrer"
       ></iframe>
+
+      @if (useLens && lensFilter() !== 'none') {
+        <div
+          class="lens"
+          aria-hidden="true"
+          [style.backdrop-filter]="lensFilter()"
+          [style.-webkit-backdrop-filter]="lensFilter()"
+        ></div>
+      }
 
       @if (simulated() && state.lowVision() && state.tunnelVision()) {
         <div class="mask" aria-hidden="true" [style.background]="tunnelMask()"></div>
