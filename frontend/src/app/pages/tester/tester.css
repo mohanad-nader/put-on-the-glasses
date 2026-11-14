@@ -49,6 +49,16 @@
 .canvas app-site-frame {
   flex: 1;
 }
+.pair {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.pair app-site-frame {
+  min-width: 0;
+}
 .empty {
   max-width: 560px;
   margin: auto;

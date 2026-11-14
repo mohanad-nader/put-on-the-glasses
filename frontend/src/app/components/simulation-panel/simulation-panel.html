@@ -95,4 +95,19 @@
       </label>
     </div>
   </details>
+    <details open>
+    <summary>View</summary>
+    <div class="switches">
+      <label class="sw-pill" [class.on]="state.sideBySide()">
+        <input
+          type="checkbox"
+          role="switch"
+          [checked]="state.sideBySide()"
+          (change)="state.sideBySide.set(checked($event))"
+        />
+        <span class="knob" aria-hidden="true"></span>
+        <span class="t">Side by side<small>Original next to simulated</small></span>
+      </label>
+    </div>
+  </details>
 </aside>
