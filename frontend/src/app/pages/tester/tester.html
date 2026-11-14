@@ -17,7 +17,14 @@
     <div class="fbody">
       <div class="canvas" role="region" aria-label="Canvas with the site frame">
         @if (state.url()) {
-          <app-site-frame />
+          @if (state.sideBySide()) {
+            <div class="pair">
+              <app-site-frame [simulated]="false" />
+              <app-site-frame />
+            </div>
+          } @else {
+            <app-site-frame />
+          }
         } @else {
           <div class="empty">
             <h2>Which site do you want to test?</h2>

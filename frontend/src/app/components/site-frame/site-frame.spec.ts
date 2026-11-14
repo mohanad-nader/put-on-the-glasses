@@ -22,6 +22,9 @@ describe('SiteFrame', () => {
   }
 
   const iframe = () => root.querySelector('iframe')!;
+  // The filter sits on the iframe, or on the transparent .lens layer in front of it.
+  const appliedStyle = () =>
+    (iframe().getAttribute('style') ?? '') + (root.querySelector('.lens')?.getAttribute('style') ?? '');
 
   it('loads the site in a sandboxed, titled iframe', () => {
     expect(iframe().getAttribute('src')).toBe('https://example.com/');
@@ -39,14 +42,14 @@ describe('SiteFrame', () => {
   it('applies the color blindness filter to the iframe', async () => {
     state.colorBlindness.set('protanopia');
     await flush();
-    expect(iframe().getAttribute('style')).toMatch(/url\("?#cvd-protanopia"?\)/);
+    expect(appliedStyle()).toMatch(/url\("?#cvd-protanopia"?\)/);
   });
 
   it('applies blur and contrast, and draws the tunnel mask, for low vision', async () => {
     state.lowVision.set(true);
     await flush();
-    expect(iframe().getAttribute('style')).toContain('blur(1.6px)');
-    expect(iframe().getAttribute('style')).toContain('contrast(0.7)');
+    expect(appliedStyle()).toContain('blur(1.6px)');
+    expect(appliedStyle()).toContain('contrast(0.7)');
     expect(root.querySelector('.mask')).not.toBeNull();
   });
 

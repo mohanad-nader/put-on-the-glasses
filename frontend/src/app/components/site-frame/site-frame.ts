@@ -1,5 +1,7 @@
 import {
   Component,
+  effect,
+  input,
   DestroyRef,
   ElementRef,
   afterNextRender,
@@ -30,6 +32,7 @@ import {
 })
 export class SiteFrame {
   protected readonly state = inject(SimulationStateService);
+  readonly simulated = input(true);
   private readonly sanitizer = inject(DomSanitizer);
   private readonly destroyRef = inject(DestroyRef);
 
@@ -51,8 +54,24 @@ export class SiteFrame {
     }
   });
 
+  protected readonly filter = computed(() => (this.simulated() ? this.state.frameFilter() : 'none'));
+
+  /**
+   * Chrome and Edge ignore a CSS/SVG `filter` set on an iframe that shows a
+   * different site (it runs in its own process). A transparent layer in front
+   * of the frame with `backdrop-filter` filters what is behind it instead and
+   * works for every site. Browsers without it fall back to filtering the iframe.
+   */
+  protected readonly useLens =
+    typeof CSS !== 'undefined' &&
+    typeof CSS.supports === 'function' &&
+    CSS.supports('backdrop-filter', 'url(#a)');
+
+  protected readonly iframeFilter = computed(() => (this.useLens ? 'none' : this.filter()));
+  protected readonly lensFilter = computed(() => (this.useLens ? this.filter() : 'none'));
+
   protected readonly logicalWidth = computed(() =>
-    this.state.zoomReflow() ? REFLOW_FRAME_WIDTH : DESKTOP_FRAME_WIDTH
+    this.simulated() && this.state.zoomReflow() ? REFLOW_FRAME_WIDTH : DESKTOP_FRAME_WIDTH
   );
 
   protected readonly scale = computed(() => {
@@ -65,11 +84,12 @@ export class SiteFrame {
     return h > 0 ? Math.max(360, Math.floor(h / this.scale())) : 640;
   });
 
-  protected readonly sizeLabel = computed(() =>
-    this.state.zoomReflow()
+  protected readonly sizeLabel = computed(() => {
+    const prefix = this.simulated() ? '' : 'original, ';
+    return this.simulated() && this.state.zoomReflow()
       ? `${REFLOW_FRAME_WIDTH} px frame`
-      : `${DESKTOP_FRAME_WIDTH} px desktop frame, shown at ${Math.round(this.scale() * 100)}%`
-  );
+      : `${prefix}${DESKTOP_FRAME_WIDTH} px desktop frame, shown at ${Math.round(this.scale() * 100)}%`;
+  });
 
   /** Dark ring with a clear center, driven by the "clear area" slider. */
   protected readonly tunnelMask = computed(() => {
@@ -78,6 +98,11 @@ export class SiteFrame {
   });
 
   constructor() {
+        effect(() => {
+      if (this.simulated() && this.state.noMouse()) {
+        this.frameEl()?.nativeElement.focus();
+      }
+    });
     afterNextRender(() => {
       if (typeof ResizeObserver === 'undefined') {
         return;

@@ -1,9 +1,12 @@
 <p class="flabel">{{ host() }}, {{ sizeLabel() }}</p>
 
-@if (state.noMouse()) {
+@if (simulated() && state.noMouse()) {
   <p class="notice" role="status">
     <span>Mouse disabled on the site. Use Tab, Shift+Tab, Enter, Space and the arrow keys.</span>
-    <button class="ghost" type="button" (click)="focusSite()">Move focus into the site</button>
+    <span class="actions">
+      <button class="ghost" type="button" (click)="focusSite()">Move focus into the site</button>
+      <button class="ghost" type="button" (click)="state.setNoMouse(false)">Turn off</button>
+    </span>
   </p>
 }
 
@@ -23,16 +26,25 @@
         #siteFrame
         [src]="safeUrl()"
         [title]="'Website under test: ' + host()"
-        [style.filter]="state.frameFilter()"
+        [style.filter]="iframeFilter()"
         sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"
         referrerpolicy="no-referrer"
       ></iframe>
 
-      @if (state.lowVision() && state.tunnelVision()) {
+      @if (useLens && lensFilter() !== 'none') {
+        <div
+          class="lens"
+          aria-hidden="true"
+          [style.backdrop-filter]="lensFilter()"
+          [style.-webkit-backdrop-filter]="lensFilter()"
+        ></div>
+      }
+
+      @if (simulated() && state.lowVision() && state.tunnelVision()) {
         <div class="mask" aria-hidden="true" [style.background]="tunnelMask()"></div>
       }
 
-      @if (state.noMouse()) {
+      @if (simulated() && state.noMouse()) {
         <div class="blocker" aria-hidden="true"></div>
       }
     </div>

@@ -22,6 +22,11 @@
   border-radius: 6px;
   font-size: 0.92rem;
 }
+.actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
 .measure {
   flex: 1;
   min-height: 0;
@@ -45,6 +50,12 @@ iframe {
   height: 100%;
   border: 0;
   background: #fff;
+}
+/* Color blindness and low vision: filters whatever is behind it, never takes clicks. */
+.lens {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
 }
 /* Tunnel vision: lets clicks pass through so the dark area is not a wall. */
 .mask {
