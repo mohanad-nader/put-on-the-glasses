@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <!-- D24: user-scalable=no blocks zooming (WCAG 1.4.4 Resize Text) -->
+  <meta name="viewport" content="width=device-width, user-scalable=no">
+  <title>Defects: forms</title>
+</head>
+<body>
+  <h1>Forms with seeded defects</h1>
+  <p>Test page for Put on the Glasses. Every defect here is on purpose.</p>
+
+  <h2>Search (GET form)</h2>
+  <!-- D21: GET form, used to test form rewriting through the proxy -->
+  <form action="results.html" method="get">
+    <label for="q">Search</label>
+    <input id="q" name="q" type="text">
+    <button type="submit">Search</button>
+  </form>
+
+  <h2>Contact (POST form)</h2>
+  <!-- D22: POST form, only works once POST forwarding exists -->
+  <form action="results.html" method="post">
+    <label for="msg">Message</label>
+    <input id="msg" name="msg" type="text">
+    <button type="submit">Send</button>
+  </form>
+
+  <h2>Newsletter</h2>
+  <!-- D23: text field with no label (WCAG 3.3.2 Labels or Instructions) -->
+  <form action="results.html" method="get">
+    <input name="email" type="text">
+    <button type="submit">Subscribe</button>
+  </form>
+</body>
+</html>
