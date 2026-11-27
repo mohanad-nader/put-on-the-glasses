@@ -1,4 +1,11 @@
 <p class="flabel">{{ host() }}, {{ sizeLabel() }}</p>
+@if (bridge.proxyError(); as err) {
+  <div class="banner" role="alert">
+    <strong>{{ err.message }}</strong>
+    <span class="code">{{ err.code }}</span>
+    <a [href]="state.url()" target="_blank" rel="noopener noreferrer">Open in a new tab</a>
+  </div>
+}
 
 @if (simulated() && state.noMouse()) {
   <p class="notice" role="status">
@@ -54,5 +61,8 @@
 <p class="hint">
   Blank frame? Many sites refuse to be shown inside another page.
   <a [href]="state.url()" target="_blank" rel="noopener noreferrer">Open the site in a new tab</a>
-  (without simulation). Proxy mode in a later milestone will handle these sites.
+  (without simulation).
+  @if (state.viewerMode() === 'wrapper') {
+    <button class="ghost" type="button" (click)="state.viewerMode.set('proxy')">Try proxy mode</button>
+  }
 </p>
