@@ -4,7 +4,7 @@
   <div class="fig">
     <div class="ftop">
       <b>Tester</b>
-      <span class="url" [title]="state.url()">{{ state.url() || 'No site loaded' }}</span>
+            <span class="url" [title]="state.url()">{{ (state.viewerMode() === 'proxy' ? state.currentUrl() : '') || state.url() || 'No site loaded' }}</span>
       <span class="tag">{{ state.activeSummary() }}</span>
       @if (state.url()) {
         <button class="ghost" type="button" (click)="changeSite()">Change site</button>
