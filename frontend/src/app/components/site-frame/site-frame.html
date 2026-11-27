@@ -24,7 +24,7 @@
     >
       <iframe
         #siteFrame
-        [src]="safeUrl()"
+        [src]="src()"
         [title]="'Website under test: ' + host()"
         [style.filter]="iframeFilter()"
         sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"

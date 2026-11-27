@@ -11,6 +11,8 @@ import {
   viewChild,
 } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
+import { API_BASE } from '../../config';
+import { FrameBridgeService } from '../../services/frame-bridge';
 import {
   DESKTOP_FRAME_WIDTH,
   REFLOW_FRAME_WIDTH,
@@ -32,6 +34,7 @@ import {
 })
 export class SiteFrame {
   protected readonly state = inject(SimulationStateService);
+  protected readonly bridge = inject(FrameBridgeService);
   readonly simulated = input(true);
   private readonly sanitizer = inject(DomSanitizer);
   private readonly destroyRef = inject(DestroyRef);
@@ -41,10 +44,15 @@ export class SiteFrame {
 
   private readonly available = signal({ w: 0, h: 0 });
 
-  // Only http(s) URLs reach this point (SimulationStateService.loadUrl checks).
-  protected readonly safeUrl = computed(() =>
-    this.sanitizer.bypassSecurityTrustResourceUrl(this.state.url())
-  );
+  // Wrapper mode loads the site directly; proxy mode loads it through Spring Boot.
+  protected readonly src = computed(() => {
+    const url = this.state.url();
+    const raw =
+      this.state.viewerMode() === 'proxy'
+        ? `${API_BASE}/api/proxy?_u=${encodeURIComponent(url)}`
+        : url;
+    return this.sanitizer.bypassSecurityTrustResourceUrl(raw);
+  });
 
   protected readonly host = computed(() => {
     try {
@@ -101,6 +109,12 @@ export class SiteFrame {
         effect(() => {
       if (this.simulated() && this.state.noMouse()) {
         this.frameEl()?.nativeElement.focus();
+      }
+    });
+        effect(() => {
+      const el = this.frameEl()?.nativeElement ?? null;
+      if (this.simulated()) {
+        this.bridge.attach(el);
       }
     });
     afterNextRender(() => {
