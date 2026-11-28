@@ -4,3 +4,4 @@ dist/
 .angular/
 .idea/
 *.log
+.vscode/
