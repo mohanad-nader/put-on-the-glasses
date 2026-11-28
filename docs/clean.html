@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Clean page: no defects</title>
+  <style>
+    body { font: 16px/1.5 system-ui, sans-serif; margin: 0; color: #1b1b1b; background: #fff; }
+    header, main, footer { max-width: 46rem; margin: 0 auto; padding: 0 1rem; }
+    header { padding-top: 1rem; }
+    nav ul { display: flex; gap: 1.25rem; list-style: none; padding: 0; margin: .5rem 0 0; }
+    a { color: #0b4f9c; }
+    .case { border: 1px solid #ccc; border-radius: 8px; padding: .75rem 1rem; margin: 1rem 0; }
+    button, input { font: inherit; min-height: 44px; }
+    input[type="text"] { padding: 0 .5rem; }
+    footer { padding-bottom: 2rem; color: #333; }
+  </style>
+</head>
+<body>
+  <header>
+    <p><strong>Put on the Glasses test site</strong></p>
+    <nav aria-label="Main">
+      <ul>
+        <li><a href="index.html">Test pages home</a></li>
+        <li><a href="results.html">Search results page</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <h1>Clean page with no defects</h1>
+    <p>This page has the same kinds of content as the defect pages, but every item is done correctly. The screen-reader view should list it with no problem flags.</p>
+
+    <h2>Images</h2>
+    <div class="case">
+      <p>An informative image with real alt text:</p>
+      <img width="120" height="80" alt="Grey rectangle that stands in for a product photo"
+           src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='80'%3E%3Crect width='120' height='80' fill='%2390a4ae'/%3E%3C/svg%3E">
+      <p>A decorative divider, correctly hidden from screen readers with empty alt text:</p>
+      <img width="120" height="20" alt=""
+           src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='20'%3E%3Crect width='120' height='20' fill='%23cfd8dc'/%3E%3C/svg%3E">
+    </div>
+
+    <h2>Controls</h2>
+    <div class="case">
+      <button type="button" aria-label="Add item">
+        <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M3 10h14M10 3v14" stroke="#000" stroke-width="2" fill="none"></path></svg>
+      </button>
+      <button type="button">Save changes</button>
+    </div>
+
+    <h2>Form</h2>
+    <form action="results.html" method="get" aria-label="Newsletter">
+      <div class="case">
+        <label for="email">Your email address</label><br>
+        <input id="email" name="email" type="text" placeholder="name@example.com">
+        <button type="submit">Subscribe</button>
+      </div>
+    </form>
+
+    <h2>Links</h2>
+    <h3>Descriptive link text</h3>
+    <p>Read the <a href="results.html">full list of test results</a> or go back to the <a href="index.html">test pages home</a>.</p>
+  </main>
+
+  <footer>
+    <p>Footer: every defect page in this set has a clean counterpart on this page.</p>
+  </footer>
+</body>
+</html>

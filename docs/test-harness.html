@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Inspect harness (Rowan, private)</title>
+  <style>
+    body { font: 15px/1.45 system-ui, sans-serif; margin: 0; padding: 12px; }
+    .bar { display: flex; gap: 18px; flex-wrap: wrap; align-items: center; margin: 8px 0 12px; }
+    .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    iframe { width: 100%; height: 78vh; border: 2px solid #888; }
+    section { min-width: 0; height: 78vh; overflow: auto; }
+    ol { padding-left: 1.4em; margin: 0 0 12px; }
+    li button { all: unset; cursor: pointer; padding: 2px 4px; }
+    li button:hover, li button:focus-visible { background: #fff3cd; outline: 2px solid #ff9800; }
+    .flag { color: #b00020; font-weight: 700; }
+    pre { background: #f4f4f4; padding: 8px; white-space: pre-wrap; max-height: 24vh; overflow: auto; }
+  </style>
+</head>
+<body>
+  <h1>Inspect harness</h1>
+  <p>Acts like the Angular app: the page under test sits in an iframe, the sim scripts are injected into it, and the same
+     <code>postMessage</code> protocol is used. Serve the <strong>repo root</strong> over http
+     (<code>python -m http.server 5500</code>) and open <code>http://localhost:5500/docs/test-harness.html</code>.
+     Opening it with <code>file://</code> does not work, Chrome treats every file as its own origin.</p>
+
+  <div class="bar">
+    <label>Page under test
+      <select id="page">
+        <option>defects-sr.html</option>
+        <option>clean.html</option>
+        <option>defects-keyboard.html</option>
+        <option>defects-forms.html</option>
+        <option>index.html</option>
+      </select>
+    </label>
+    <label><input type="checkbox" id="sr"> Screen-reader view</label>
+    <label><input type="checkbox" id="tab"> Tab-order overlay</label>
+  </div>
+
+  <div class="cols">
+    <iframe id="frame" title="Page under test"></iframe>
+    <section>
+      <h2>Screen-reader list <span id="count"></span></h2>
+      <ol id="list"></ol>
+      <h2>Tab order (message payload)</h2>
+      <pre id="tab-out">(off)</pre>
+      <h2>Messages</h2>
+      <pre id="log"></pre>
+    </section>
+  </div>
+
+  <script>
+    const MODULES = ['00-core', '10-keyboard', '20-tremor', '30-screenreader', '40-taborder'];  // file-name order, like SimScripts
+    const SIM = '../backend/src/main/resources/sim/';
+    const frame = document.getElementById('frame');
+    const cfg = { noKeyboard: false, tremor: { on: false, amp: 8 }, screenReader: false, tabOrder: false };
+
+    function log(line) {
+      const el = document.getElementById('log');
+      el.textContent = (line + '\n' + el.textContent).slice(0, 4000);
+    }
+
+    function send(type, payload) {
+      frame.contentWindow.postMessage({ source: 'potg', type, payload }, '*');
+      log('-> ' + type + ' ' + String(JSON.stringify(payload)).slice(0, 120));
+    }
+
+    // inject the scripts one after another into the frame, a missing file (not written yet) is skipped
+    function loadModules(win, i) {
+      if (i >= MODULES.length) return;
+      const s = win.document.createElement('script');
+      s.src = new URL(SIM + MODULES[i] + '.js', location.href).href;
+      s.onload = s.onerror = () => loadModules(win, i + 1);
+      win.document.head.appendChild(s);
+    }
+
+    frame.addEventListener('load', () => {
+      const win = frame.contentWindow;
+      win.__POTG_PAGE_URL = win.location.href;          // what SimScripts.forPage() writes in the real proxy
+      loadModules(win, 0);
+    });
+
+    function renderList(items) {
+      const list = document.getElementById('list');
+      list.textContent = '';
+      document.getElementById('count').textContent = '(' + items.length + ' items, ' + items.filter((i) => i.flags.length).length + ' problems)';
+      items.forEach((i) => {
+        const li = document.createElement('li');
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.textContent = i.role + (i.level ? ' level ' + i.level : '') + ', ' + (i.name || 'unlabeled') + (i.states.length ? ', ' + i.states.join(', ') : '') + ' ';
+        if (i.flags.length) {
+          const f = document.createElement('span');
+          f.className = 'flag';
+          f.textContent = '[' + i.flags.join(', ') + ']';
+          b.appendChild(f);
+        }
+        b.addEventListener('click', () => send('sr-focus', { id: i.id }));
+        li.appendChild(b);
+        list.appendChild(li);
+      });
+    }
+
+    window.addEventListener('message', (e) => {
+      if (e.source !== frame.contentWindow) return;     // same safety rule as the real bridge
+      const m = e.data;
+      if (!m || m.source !== 'potg') return;
+      log('<- ' + m.type + ' ' + String(JSON.stringify(m.payload)).slice(0, 120));
+      if (m.type === 'ready') send('config', cfg);       // a fresh page needs the settings again
+      if (m.type === 'sr-items') renderList(m.payload || []);
+      if (m.type === 'taborder') document.getElementById('tab-out').textContent = m.payload ? JSON.stringify(m.payload, null, 2) : '(off)';
+    });
+
+    document.getElementById('sr').addEventListener('change', (e) => { cfg.screenReader = e.target.checked; send('config', cfg); });
+    document.getElementById('tab').addEventListener('change', (e) => { cfg.tabOrder = e.target.checked; send('config', cfg); });
+    document.getElementById('page').addEventListener('change', (e) => { frame.src = e.target.value; });
+    frame.src = document.getElementById('page').value;
+  </script>
+</body>
+</html>
