@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Test page: color and contrast defects</title>
+<style>
+  body { font: 16px/1.5 Arial, sans-serif; color: #1a1a1a; background: #fff; max-width: 760px; margin: 0 auto; padding: 16px; }
+  h1 { font-size: 1.6rem; } h2 { font-size: 1.2rem; margin-top: 28px; }
+  section { border: 1px solid #767676; border-radius: 6px; padding: 12px 16px; margin: 14px 0; }
+  .tag { font-size: 0.8rem; color: #595959; }
+  /* D01: status shown by color only */
+  .dot { display: inline-block; width: 14px; height: 14px; border-radius: 50%; margin-right: 6px; vertical-align: middle; }
+  .red { background: #d32f2f; } .green { background: #2e9e4f; }
+  /* D02: legend that differs only in red and green */
+  .legend span { display: inline-block; width: 16px; height: 16px; vertical-align: middle; margin: 0 4px 0 12px; }
+  /* D03: #aaa on white, about 2.3:1 */
+  .low { color: #aaaaaa; }
+  /* D04: link color too close to the body text color, no underline */
+  .close p { color: #333333; }
+  .close a { color: #2a2a6a; text-decoration: none; }
+  /* D05: white on yellow */
+  .yellow { background: #ffcc00; color: #ffffff; padding: 10px 14px; display: inline-block; font-weight: bold; }
+  /* controls with no defect */
+  .okrow .shape { display: inline-block; margin-right: 18px; }
+  details table { border-collapse: collapse; font-size: 0.9rem; } details td, details th { border: 1px solid #767676; padding: 4px 8px; text-align: left; }
+</style>
+</head>
+<body>
+<h1>Color and contrast test page</h1>
+<p>Use this page with the color blindness types and Low vision. Defects D01 to D05 are there on purpose.</p>
+
+<section data-defect="D01">
+  <h2>Server status</h2>
+  <p data-defect="D01"><span class="dot green"></span> Web server
+     &nbsp;&nbsp; <span class="dot red"></span> Database
+     &nbsp;&nbsp; <span class="dot green"></span> Mail</p>
+  <p class="tag">D01: status is shown by a red or green dot only, with no text. Reveals: protanopia and deuteranopia filters.</p>
+</section>
+
+<section data-defect="D02">
+  <h2>Sales chart</h2>
+  <svg width="300" height="110" viewBox="0 0 300 110" role="img" aria-label="Bar chart of two series, A and B, over three months">
+    <rect x="20"  y="40" width="28" height="60" fill="#d32f2f"/><rect x="52"  y="30" width="28" height="70" fill="#2e9e4f"/>
+    <rect x="110" y="50" width="28" height="50" fill="#d32f2f"/><rect x="142" y="25" width="28" height="75" fill="#2e9e4f"/>
+    <rect x="200" y="35" width="28" height="65" fill="#d32f2f"/><rect x="232" y="55" width="28" height="45" fill="#2e9e4f"/>
+    <line x1="10" y1="100" x2="290" y2="100" stroke="#595959"/>
+  </svg>
+  <div class="legend" data-defect="D02"><span class="red"></span>Series A<span class="green"></span>Series B</div>
+  <p class="tag">D02: the two series differ only in red and green, with no pattern or label on the bars. Reveals: protanopia and deuteranopia filters.</p>
+</section>
+
+<section data-defect="D03">
+  <h2>Article</h2>
+  <p class="low" data-defect="D03">This paragraph is light grey text on a white background. It is hard to read for anybody with weak vision,
+     and almost impossible with the Low vision mode on.</p>
+  <p class="tag">D03: #aaaaaa on #ffffff, about 2.3:1 (AA asks 4.5:1). Reveals: Low vision.</p>
+</section>
+
+<section data-defect="D04" class="close">
+  <h2>Inline link</h2>
+  <p>Read the <a href="#terms" data-defect="D04">terms and conditions</a> before you continue. The link has no underline.</p>
+  <p class="tag">D04: the link color is almost the same as the text around it and nothing else marks it. Reveals: achromatopsia filter, Low vision.</p>
+</section>
+
+<section data-defect="D05">
+  <h2>Special offer</h2>
+  <span class="yellow" data-defect="D05">Limited offer: 20% off</span>
+  <p class="tag">D05: white text on #ffcc00, about 1.5:1. Reveals: Low vision, tritanopia filter.</p>
+</section>
+
+<section class="okrow">
+  <h2>Control (no defect)</h2>
+  <p><span class="shape"><span class="dot green"></span> Web server: online</span>
+     <span class="shape"><span class="dot red"></span> Database: <b>offline</b></span></p>
+  <p style="color:#1a1a1a">This paragraph is dark grey on white (about 17:1) and its status has a text label.</p>
+</section>
+
+<details>
+  <summary>Known defects on this page</summary>
+  <table>
+    <tr><th>ID</th><th>Defect</th><th>WCAG</th></tr>
+    <tr><td>D01</td><td>Status by red and green dot only</td><td>1.4.1 Use of Color</td></tr>
+    <tr><td>D02</td><td>Chart legend differs only in red and green</td><td>1.4.1 Use of Color</td></tr>
+    <tr><td>D03</td><td>#aaa text on white</td><td>1.4.3 Contrast (Minimum)</td></tr>
+    <tr><td>D04</td><td>Link color close to text, no underline</td><td>1.4.1 Use of Color</td></tr>
+    <tr><td>D05</td><td>White text on #ffcc00</td><td>1.4.3 Contrast (Minimum)</td></tr>
+  </table>
+</details>
+</body>
+</html>

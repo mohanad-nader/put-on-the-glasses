@@ -1,0 +1,40 @@
+<details open>
+  <summary>Motor</summary>
+  <div class="switches">
+    <label class="sw-pill" [class.on]="state.noKeyboard()">
+      <input
+        type="checkbox"
+        role="switch"
+        [checked]="state.noKeyboard()"
+        (change)="state.toggleNoKeyboard()"
+      />
+      <span class="knob" aria-hidden="true"></span>
+      <span class="t">No keyboard<small>Mouse only, key presses are blocked</small></span>
+    </label>
+
+    @if (state.noKeyboard()) {
+      <p class="note counter" role="status">Key presses blocked: {{ bridge.keyboardBlocked() }}</p>
+    }
+
+    <label class="sw-pill" [class.on]="state.tremor()">
+      <input
+        type="checkbox"
+        role="switch"
+        [checked]="state.tremor()"
+        (change)="state.toggleTremor()"
+      />
+      <span class="knob" aria-hidden="true"></span>
+      <span class="t">Hand tremor<small>The cursor shakes and clicks land off target</small></span>
+    </label>
+
+    @if (state.tremor()) {
+      <div class="sub">
+        <div class="slider">
+          <label for="tremor-amp">Strength <output for="tremor-amp">{{ state.tremorAmp() }} px</output></label>
+          <input id="tremor-amp" type="range" min="0" max="30" step="1"
+            [value]="state.tremorAmp()" (input)="state.setTremorAmp(numberValue($event))" />
+        </div>
+      </div>
+    }
+  </div>
+</details>

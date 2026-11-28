@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Test page: keyboard and motor defects</title>
+<style>
+  body { font: 16px/1.5 Arial, sans-serif; color: #1a1a1a; background: #fff; max-width: 760px; margin: 0 auto; padding: 16px; }
+  h1 { font-size: 1.6rem; } h2 { font-size: 1.2rem; margin-top: 28px; }
+  section { border: 1px solid #767676; border-radius: 6px; padding: 12px 16px; margin: 14px 0; }
+  .tag { font-size: 0.8rem; color: #595959; }
+  /* D08: focus outline removed from every link, with no replacement style */
+  a { color: #0b4fa8; outline: none; }
+  /* D06: a clickable div, not focusable and with no role */
+  .fake-btn { display: inline-block; background: #0b4fa8; color: #fff; padding: 10px 16px; border-radius: 4px; cursor: pointer; }
+  /* D09: a menu that opens only on hover */
+  .menu { position: relative; display: inline-block; }
+  .menu-title { display: inline-block; padding: 10px 16px; background: #e6e6e6; border-radius: 4px; }
+  .menu-list { display: none; position: absolute; left: 0; top: 100%; background: #fff; border: 1px solid #767676; min-width: 170px; padding: 6px 0; }
+  .menu:hover .menu-list { display: block; }
+  .menu-list a { display: block; padding: 6px 14px; }
+  /* D10: three 14 px icon links packed together */
+  .icons a { display: inline-block; width: 14px; height: 14px; line-height: 14px; font-size: 11px; text-align: center; background: #0b4fa8; color: #fff; text-decoration: none; margin-right: 2px; }
+  /* control: a normal, good target */
+  .good { min-width: 44px; min-height: 44px; padding: 0 18px; font-size: 1rem; background: #0b4fa8; color: #fff; border: 2px solid #0b4fa8; border-radius: 6px; }
+  .good:focus-visible { outline: 3px solid #ffbf47; outline-offset: 2px; }
+  #log { margin-top: 8px; min-height: 1.4em; font-weight: bold; }
+  details table { border-collapse: collapse; font-size: 0.9rem; } details td, details th { border: 1px solid #767676; padding: 4px 8px; text-align: left; }
+</style>
+</head>
+<body>
+<h1>Keyboard and motor test page</h1>
+<p>Use this page with No mouse, No keyboard, the tab-order overlay and Hand tremor. Every defect below is
+   there on purpose and has an ID (D06 to D11). Last line of each box: what it should reveal.</p>
+<p id="log" role="status" aria-live="polite">Nothing clicked yet.</p>
+
+<section data-defect="D06">
+  <h2>Click targets</h2>
+  <div class="fake-btn" onclick="say('D06 div button clicked')" data-defect="D06">Save (this is a div)</div>
+  <p class="tag">D06: a div with onclick. Tab skips it. Reveals: No mouse, tab-order overlay.</p>
+</section>
+
+<section data-defect="D07">
+  <h2>Tab order</h2>
+  <p>Three links, in this order on the page:</p>
+  <a href="#one" tabindex="5">First on the page (tabindex 5)</a> |
+  <a href="#two" tabindex="1">Second on the page (tabindex 1)</a> |
+  <a href="#three" tabindex="3">Third on the page (tabindex 3)</a>
+  <p class="tag">D07: positive tabindex values make the focus order jump. D08: links have no visible focus style.
+     Reveals: tab-order overlay, No mouse.</p>
+</section>
+
+<section data-defect="D09">
+  <h2>Menu</h2>
+  <div class="menu" data-defect="D09">
+    <span class="menu-title">Products (hover me)</span>
+    <div class="menu-list">
+      <a href="#p1">Product one</a>
+      <a href="#p2">Product two</a>
+      <a href="#p3">Product three</a>
+    </div>
+  </div>
+  <p class="tag">D09: the menu opens only on mouse hover, never on focus or key press. Reveals: No mouse.</p>
+</section>
+
+<section data-defect="D10">
+  <h2>Tiny targets</h2>
+  <div class="icons" data-defect="D10">
+    <a href="#a" aria-label="Share">S</a><a href="#b" aria-label="Print">P</a><a href="#c" aria-label="Help">?</a>
+  </div>
+  <p class="tag">D10: three 14 px links next to each other (WCAG asks 24 px). Reveals: Hand tremor at strength 15 or more.</p>
+</section>
+
+<section data-defect="D11">
+  <h2>Search</h2>
+  <label for="q">Search the site</label>
+  <input id="q" type="text" size="26" onkeydown="if(event.key==='Enter'){say('D11 search sent: '+this.value)}">
+  <p class="tag">D11: there is no submit button, Enter is the only way. Reveals: No keyboard.</p>
+</section>
+
+<section>
+  <h2>Control (no defect)</h2>
+  <button class="good" type="button" onclick="say('Good 44 px button clicked')">Good button</button>
+  <p class="tag">A normal 44 px button. With Hand tremor it should still be easy to hit.</p>
+</section>
+
+<details>
+  <summary>Known defects on this page</summary>
+  <table>
+    <tr><th>ID</th><th>Defect</th><th>WCAG</th></tr>
+    <tr><td>D06</td><td>div onclick, not focusable</td><td>2.1.1 Keyboard</td></tr>
+    <tr><td>D07</td><td>Positive tabindex values</td><td>2.4.3 Focus Order</td></tr>
+    <tr><td>D08</td><td>outline: none on all links</td><td>2.4.7 Focus Visible</td></tr>
+    <tr><td>D09</td><td>Menu opens only on hover</td><td>1.4.13 Content on Hover or Focus, 2.1.1</td></tr>
+    <tr><td>D10</td><td>Three 14 px links</td><td>2.5.8 Target Size (Minimum)</td></tr>
+    <tr><td>D11</td><td>Enter-only search</td><td>2.1.1 Keyboard</td></tr>
+  </table>
+</details>
+
+<script>
+  function say(text) { document.getElementById('log').textContent = text; }
+</script>
+</body>
+</html>
