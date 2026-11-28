@@ -5,6 +5,7 @@ import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Objects;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.stereotype.Component;
@@ -23,7 +24,7 @@ public class SimScripts {
     public SimScripts() {
         try {
             Resource[] files = new PathMatchingResourcePatternResolver().getResources("classpath:sim/*.js");
-            Arrays.sort(files, Comparator.comparing(Resource::getFilename)); // 00-core must come first
+            Arrays.sort(files, Comparator.comparing((Resource f) -> Objects.requireNonNullElse(f.getFilename(), ""))); // 00-core must come first
             StringBuilder sb = new StringBuilder();
             for (Resource file : files) {
                 sb.append(new String(file.getInputStream().readAllBytes(), StandardCharsets.UTF_8)).append('\n');
