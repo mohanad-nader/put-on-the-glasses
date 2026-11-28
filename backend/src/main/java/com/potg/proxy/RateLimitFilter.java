@@ -1,6 +1,6 @@
 package com.potg.proxy;
 
-import com.potg.config.ProxyProperties;
+
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
