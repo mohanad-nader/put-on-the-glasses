@@ -1,0 +1,112 @@
+<details open>
+  <summary>Screen-reader view</summary>
+  <div class="switches">
+    <label class="sw-pill" [class.on]="state.screenReader()">
+      <input
+        type="checkbox"
+        role="switch"
+        [checked]="state.screenReader()"
+        (change)="state.toggleScreenReader()"
+      />
+      <span class="knob" aria-hidden="true"></span>
+      <span class="t">Screen-reader view<small>What a screen reader would announce, in order</small></span>
+    </label>
+  </div>
+
+  @if (!state.screenReader()) {
+    <p class="note">Turn the view on to list what a screen reader would announce.</p>
+    @if (state.viewerMode() === 'wrapper') {
+      <p class="note">This needs proxy mode, it will switch automatically.</p>
+    }
+  } @else {
+    <div class="chips" role="group" aria-label="Filter the list">
+      @for (f of filters; track f.id) {
+        <button
+          type="button"
+          class="chip"
+          [class.on]="filter() === f.id"
+          [attr.aria-pressed]="filter() === f.id"
+          (click)="setFilter(f.id)"
+        >
+          {{ f.label }}
+        </button>
+      }
+    </div>
+
+    <p class="count" role="status">
+      {{ bridge.srItems().length }} items, {{ problemCount() }} problems
+    </p>
+
+    @if (bridge.srItems().length === 0) {
+      <p class="note">Waiting for the page to report its content.</p>
+    } @else if (shown().length === 0) {
+      <p class="note">Nothing matches this filter.</p>
+    } @else {
+      <ol class="items">
+        @for (i of shown(); track i.id) {
+          <li class="item">
+            <button type="button" class="row" (click)="jump(i.id)">
+              <span class="tag" aria-hidden="true">&lt;{{ i.tag }}&gt;</span>
+              <span class="say">{{ speak(i) }}</span>
+              @for (fl of i.flags; track fl) {
+                <span class="flag"><span class="sr">Problem: </span>{{ flagText(fl) }}</span>
+              }
+            </button>
+            @if (canSpeak) {
+              <button
+                type="button"
+                class="aloud"
+                [attr.aria-label]="'Read aloud: ' + speak(i)"
+                (click)="readAloud(i)"
+              >
+                Read aloud
+              </button>
+            }
+          </li>
+        }
+      </ol>
+    }
+  }
+</details>
+
+<details open>
+  <summary>Tab order</summary>
+  <div class="switches">
+    <label class="sw-pill" [class.on]="state.tabOrder()">
+      <input
+        type="checkbox"
+        role="switch"
+        [checked]="state.tabOrder()"
+        (change)="state.toggleTabOrder()"
+      />
+      <span class="knob" aria-hidden="true"></span>
+      <span class="t">Tab-order overlay<small>Numbers every keyboard stop on the page</small></span>
+    </label>
+  </div>
+
+  @if (!state.tabOrder()) {
+    <p class="note">Turn the overlay on to number every stop a keyboard user reaches with Tab.</p>
+    @if (state.viewerMode() === 'wrapper') {
+      <p class="note">This needs proxy mode, it will switch automatically.</p>
+    }
+  } @else if (bridge.tabInfo(); as t) {
+    <p class="count" role="status">{{ t.count }} tab stops, {{ t.warnings.length }} warnings</p>
+    @if (t.warnings.length > 0) {
+      <ul class="warns">
+        @for (w of t.warnings; track w.n) {
+          <li>
+            <span class="num">{{ w.n }}</span>
+            <span>
+              <b>{{ w.reason }}</b>
+              <small>{{ w.label }}</small>
+            </span>
+          </li>
+        }
+      </ul>
+    } @else {
+      <p class="note">No warnings. Focus moves in a sensible order.</p>
+    }
+  } @else {
+    <p class="note">Waiting for the page to report its tab stops.</p>
+  }
+</details>

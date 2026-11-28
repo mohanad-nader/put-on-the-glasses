@@ -1,7 +1,9 @@
 import { Injectable, computed, signal } from '@angular/core';
 import { ColorBlindness, cvdFilterId, cvdOption } from '../data/cvd-types';
+import { FrameConfig } from '../models/frame-messages';
 
 export type { ColorBlindness } from '../data/cvd-types';
+export type ViewerMode = 'wrapper' | 'proxy';
 
 export const DEFAULT_BLUR = 1.6; // px
 export const DEFAULT_CONTRAST = 0.7; // 1 = normal
@@ -23,6 +25,30 @@ export class SimulationStateService {
   readonly noKeyboard = signal(false);
   readonly sideBySide = signal(false);
 
+  // Viewer: wrapper (M1, plain iframe) or proxy (M2, page served by Spring Boot)
+  readonly viewerMode = signal<ViewerMode>('wrapper');
+  // Address shown in the URL bar; follows navigation inside the proxy.
+  readonly currentUrl = signal('');
+
+  // New proxy-only modes (noKeyboard already exists above)
+  readonly tremor = signal(false);
+  readonly tremorAmp = signal(8); // px, 0 to 30
+  readonly screenReader = signal(false);
+  readonly tabOrder = signal(false);
+
+  // True when a mode needs to look inside the page, so it needs the proxy
+  readonly needsProxy = computed(
+    () => this.noKeyboard() || this.tremor() || this.screenReader() || this.tabOrder()
+  );
+
+  // What the injected script receives as `config`
+  readonly frameConfig = computed<FrameConfig>(() => ({
+    noKeyboard: this.noKeyboard(),
+    tremor: { on: this.tremor(), amp: this.tremorAmp() },
+    screenReader: this.screenReader(),
+    tabOrder: this.tabOrder(),
+  }));
+
   // Low vision settings
   readonly blur = signal(DEFAULT_BLUR);
   readonly contrast = signal(DEFAULT_CONTRAST);
@@ -36,8 +62,12 @@ export class SimulationStateService {
       this.lowVision() ||
       this.zoomReflow() ||
       this.noMouse() ||
-      this.noKeyboard()
+      this.noKeyboard() ||
+      this.tremor() ||
+      this.screenReader() ||
+      this.tabOrder()
   );
+ 
 
   /** CSS `filter` value for the site frame (color blindness and low vision stacked). */
   readonly frameFilter = computed(() => {
@@ -70,6 +100,15 @@ export class SimulationStateService {
     }
     if (this.noKeyboard()) {
       labels.push('No keyboard');
+    }
+        if (this.tremor()) {
+      labels.push('Hand tremor');
+    }
+    if (this.screenReader()) {
+      labels.push('Screen-reader view');
+    }
+    if (this.tabOrder()) {
+      labels.push('Tab-order overlay');
     }
     return labels.length ? labels.join(' + ') : 'Normal vision';
   });
@@ -118,9 +157,41 @@ export class SimulationStateService {
     this.noKeyboard.set(on);
     if (on) {
       this.noMouse.set(false);
+      this.viewerMode.set('proxy');
     }
   }
 
+  toggleNoKeyboard(): void {
+    this.setNoKeyboard(!this.noKeyboard());
+  }
+
+  toggleTremor(): void {
+    const on = !this.tremor();
+    this.tremor.set(on);
+    if (on) {
+      this.viewerMode.set('proxy');
+    }
+  }
+
+  toggleScreenReader(): void {
+    const on = !this.screenReader();
+    this.screenReader.set(on);
+    if (on) {
+      this.viewerMode.set('proxy');
+    }
+  }
+
+  toggleTabOrder(): void {
+    const on = !this.tabOrder();
+    this.tabOrder.set(on);
+    if (on) {
+      this.viewerMode.set('proxy');
+    }
+  }
+
+  setTremorAmp(v: number): void {
+    this.tremorAmp.set(Math.min(30, Math.max(0, v)));
+  }
   /** Turns every simulation off (the site stays loaded). */
   reset(): void {
     this.colorBlindness.set('none');
@@ -128,6 +199,11 @@ export class SimulationStateService {
     this.zoomReflow.set(false);
     this.noMouse.set(false);
     this.noKeyboard.set(false);
+    this.tremor.set(false);
+    this.tremorAmp.set(8);
+    this.screenReader.set(false);
+    this.tabOrder.set(false);
+    this.viewerMode.set('wrapper');
     this.sideBySide.set(false);
     this.blur.set(DEFAULT_BLUR);
     this.contrast.set(DEFAULT_CONTRAST);

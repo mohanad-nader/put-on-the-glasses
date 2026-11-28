@@ -1,0 +1,208 @@
+:host {
+  display: block;
+}
+/* group look copied from simulation-panel.css (component styles do not cross components) */
+details {
+  padding: 14px 0;
+  border-bottom: 1px solid var(--line);
+}
+summary {
+  font: 700 1.08rem var(--head);
+  cursor: pointer;
+  padding: 6px 0;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+}
+.note {
+  color: var(--muted);
+  font-size: 0.92rem;
+  margin: 8px 0 0;
+}
+.switches {
+  display: grid;
+  gap: 8px;
+}
+.sw-pill {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  background: var(--mist);
+  border-radius: 14px;
+  cursor: pointer;
+  font-weight: 700;
+  border: 2px solid transparent;
+  min-height: 48px;
+}
+.sw-pill input {
+  position: absolute;
+  opacity: 0;
+  inset: 0;
+  margin: 0;
+  cursor: pointer;
+}
+.sw-pill.on {
+  border-color: var(--pine);
+}
+.sw-pill:focus-within {
+  outline: 3px solid var(--plum);
+  outline-offset: 2px;
+}
+.knob {
+  width: 40px;
+  height: 24px;
+  border-radius: 999px;
+  background: #66796f;
+  position: relative;
+  flex: none;
+}
+.knob::after {
+  content: '';
+  position: absolute;
+  left: 3px;
+  top: 3px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #fff;
+  transition: left 0.15s;
+}
+.sw-pill.on .knob {
+  background: var(--pine);
+}
+.sw-pill.on .knob::after {
+  left: 19px;
+}
+.t small {
+  display: block;
+  font-weight: 400;
+  color: var(--muted);
+  font-size: 0.85rem;
+  line-height: 1.3;
+}
+
+/* filter chips */
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 12px;
+}
+.chip {
+  font: 700 0.85rem var(--body);
+  min-height: 36px;
+  padding: 0 12px;
+  border-radius: 999px;
+  border: 2px solid var(--line);
+  background: #fff;
+  color: var(--pine);
+  cursor: pointer;
+}
+.chip.on {
+  background: var(--pine);
+  border-color: var(--pine);
+  color: #fff;
+}
+.count {
+  margin: 10px 0 6px;
+  font-weight: 700;
+  font-size: 0.92rem;
+}
+
+/* screen-reader rows, every row is a real button */
+.items {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 6px;
+  max-height: 340px;
+  overflow: auto;
+}
+.item {
+  display: flex;
+  gap: 6px;
+  align-items: stretch;
+}
+.row {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+  text-align: left;
+  min-height: 44px;
+  padding: 6px 10px;
+  border-radius: 10px;
+  border: 2px solid var(--line);
+  background: #fff;
+  color: var(--pine);
+  font: 400 0.92rem/1.3 var(--body);
+  cursor: pointer;
+}
+.row:hover {
+  background: var(--mist);
+}
+.tag {
+  font: 700 0.78rem ui-monospace, Consolas, monospace;
+  color: var(--muted);
+}
+.say {
+  overflow-wrap: anywhere;
+}
+.flag {
+  background: var(--bad);
+  color: #fff;
+  font: 700 0.75rem var(--body);
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+.aloud {
+  font: 700 0.8rem var(--body);
+  min-height: 44px;
+  padding: 0 10px;
+  border-radius: 10px;
+  border: 2px solid var(--line);
+  background: var(--mist);
+  color: var(--pine);
+  cursor: pointer;
+}
+
+/* tab-order warnings */
+.warns {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 6px;
+  max-height: 240px;
+  overflow: auto;
+}
+.warns li {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 6px 10px;
+  border-left: 4px solid #d84315;
+  background: #fff;
+  border-radius: 6px;
+}
+.warns small {
+  display: block;
+  color: var(--muted);
+}
+.num {
+  flex: none;
+  min-width: 26px;
+  height: 26px;
+  display: inline-grid;
+  place-items: center;
+  border-radius: 13px;
+  background: #d84315;
+  color: #fff;
+  font: 700 0.8rem var(--body);
+  padding: 0 6px;
+}

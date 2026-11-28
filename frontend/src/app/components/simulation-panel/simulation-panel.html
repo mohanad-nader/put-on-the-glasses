@@ -96,6 +96,24 @@
     </div>
   </details>
     <details open>
+    <summary>Viewer</summary>
+    <div class="switches">
+      <label class="sw-pill" [class.on]="state.viewerMode() === 'proxy'">
+        <input
+          type="checkbox"
+          role="switch"
+          [checked]="state.viewerMode() === 'proxy'"
+          (change)="state.viewerMode.set(checked($event) ? 'proxy' : 'wrapper')"
+        />
+        <span class="knob" aria-hidden="true"></span>
+        <span class="t">Proxy mode<small>Looks inside the page, works on sites that block framing</small></span>
+      </label>
+    </div>
+  </details>
+
+  <!-- <app-motor-controls /> -->
+  <!-- <app-inspect-panel /> -->
+    <details open>
     <summary>View</summary>
     <div class="switches">
       <label class="sw-pill" [class.on]="state.sideBySide()">
