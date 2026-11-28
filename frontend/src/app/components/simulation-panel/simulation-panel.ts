@@ -1,9 +1,11 @@
 import { Component, inject } from '@angular/core';
 import { CVD_OPTIONS, ColorBlindness, cvdFilterId } from '../../data/cvd-types';
 import { SimulationStateService } from '../../services/simulation-state';
+import { InspectPanel } from '../inspect-panel/inspect-panel';
 
 @Component({
   selector: 'app-simulation-panel',
+  imports: [InspectPanel],
   templateUrl: './simulation-panel.html',
   styleUrl: './simulation-panel.css',
 })
