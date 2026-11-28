@@ -1,0 +1,14 @@
+# ======[ docker-compose.yml ]=========
+# The Angular app (4200) and the proxy (8080) must stay on different origins on purpose.
+# Never put the proxy behind the same nginx as the frontend.
+services:
+  backend:
+    build: ./backend
+    ports: ["8080:8080"]
+    environment:
+      POTG_PROXY_PUBLICBASEURL: http://localhost:8080
+      POTG_CORS_ALLOWEDORIGINS: http://localhost:4200
+  frontend:
+    build: ./frontend
+    ports: ["4200:80"]
+    depends_on: [backend]
